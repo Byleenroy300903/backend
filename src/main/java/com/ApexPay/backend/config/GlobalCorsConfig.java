@@ -16,7 +16,7 @@ public class GlobalCorsConfig {
 
         // Allow your Angular terminal
         config.setAllowCredentials(true);
-        config.addAllowedOrigin("http://localhost:4200");
+        config.addAllowedOrigin("*");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
 
