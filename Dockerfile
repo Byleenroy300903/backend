@@ -1,17 +1,34 @@
-# Use an official Java runtime as a parent image
-FROM eclipse-temurin:17-jdk-alpine
-
-# Set the working directory in the container
+# STAGE 1: Build the application
+# We use a full Maven image to build the project
+FROM maven:3.9.6-eclipse-temurin-17 AS build
 WORKDIR /app
 
-# Copy the pom.xml and the maven wrapper to install dependencies
-COPY .mvn/ .mvn
-COPY mvnw pom.xml ./
-RUN ./mvnw dependency:go-offline
+# Copy the pom.xml and the maven wrapper
+COPY mvnw .
+COPY .mvn .mvn
+COPY pom.xml .
 
-# Copy the rest of the code and build the application
+# Grant execution permission to the maven wrapper
+RUN chmod +x mvnw
+
+# Download dependencies (this layer is cached)
+RUN ./mvnw dependency:go-offline -B
+
+# Copy source code and build the JAR
 COPY src ./src
 RUN ./mvnw clean package -DskipTests
 
-# Run the jar file
-ENTRYPOINT ["java","-jar","target/backend-0.0.1-SNAPSHOT.jar"]
+# STAGE 2: Run the application
+# We use a slim JRE image for the final container to save space
+FROM eclipse-temurin:17-jre-alpine
+WORKDIR /app
+
+# Copy the JAR from the build stage
+# We use a wildcard *.jar to avoid version mismatch errors
+COPY --from=build /app/target/*.jar app.jar
+
+# Expose the port (Render uses the PORT env var, but 8080 is standard)
+EXPOSE 8080
+
+# Run the application
+ENTRYPOINT ["java", "-jar", "app.jar"]
