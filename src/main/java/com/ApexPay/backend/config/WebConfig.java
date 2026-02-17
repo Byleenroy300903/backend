@@ -14,9 +14,10 @@ public class WebConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/api/**") // Allow all API endpoints
-                        .allowedOrigins("*") // Your Angular URL
+                       .allowedOrigins("https://apex-pay-frontend.vercel.app", "http://localhost:4200") 
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
+                        .exposedHeaders("Content-Type") // Needed for your SSE stream
                         .allowCredentials(true);
             }
         };
