@@ -14,7 +14,7 @@ public class WebConfig {
             public void addCorsMappings(CorsRegistry registry) {
                 // Using "/**" ensures both /api/employees and /api/logs are allowed
                 registry.addMapping("/**") 
-                        .allowedOrigins("https://apex-pay-frontend.vercel.app", "http://localhost:4200") 
+                        .allowedOrigins("https://apex-pay-frontend.vercel.app", "http://localhost:4200","https://apex-pay-frontend-git-main-byleenroy300903s-projects.vercel.app") 
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true) // Required for SSE streaming
